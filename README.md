@@ -16,5 +16,24 @@ by sending identical prompts to models from different providers and comparing th
 ## Models
 Google Gemini (Flash) · Meta Llama (via Groq)
 
-## Findings
-Coming soon. Each finding is written in plain language: what happened, and why.
+## Finding 1: Temperature 0 is not the same as "deterministic"
+**Setup:** Same prompt ("Suggest one name for a new coffee shop in Berlin"), 5 runs each
+at temperature 0 and 1.0. Models: Gemini 3.5 Flash, gpt-oss-120b (via Groq). Data: `results/exp1_nondeterminism.csv`
+
+| | Gemini 3.5 Flash | gpt-oss-120b |
+|---|---|---|
+| Unique answers at temp 0 | 4 / 5 | 1 / 5 |
+| Unique answers at temp 1.0 | 5 / 5 | 3 / 5 |
+| Median latency | ~3.8 s | ~0.46 s |
+| Input tokens for the same prompt | 18 | 88 |
+| Hidden reasoning tokens | 409–748 per run (~99% of output) | included in output, 68–86 |
+
+**What I learned**
+- Temperature 0 made gpt-oss fully consistent (identical answer and identical token count in 5/5 runs),
+  but not Gemini. Gemini's hidden thinking varied from 409 to 748 tokens per run, so it reasoned differently
+  each time, which led to different answers.
+- Hidden reasoning dominates cost: Gemini used ~100 thinking tokens per visible answer token.
+- The same prompt counted as 18 vs 88 input tokens, because gpt-oss adds a chat template and system instructions.
+- One Gemini request took 49 s instead of ~4 s. Averages hide outliers like this, so I report medians.
+
+**Limits:** 5 runs per setting is a small sample; these are observations, not general rules.
