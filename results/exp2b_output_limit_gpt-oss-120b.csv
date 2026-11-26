@@ -1,0 +1,4 @@
+model,max_tokens,answer,seconds,input_tokens,output_tokens,thinking_tokens,finish_reason,answer_words,error
+gpt-oss-120b,100,"**The Fall of the Berlin Wall – A Detailed Account of the Events of 1989**
+
+The Berlin Wall, erected in 1961, had long been the most powerful physical symbol of the Cold War division between the communist",1.08,91,100,,length,37,
